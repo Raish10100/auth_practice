@@ -1,5 +1,8 @@
+const { compare } = require('bcrypt');
 const userModel = require('../model/userSchema')
 const emailValidater = require('email-validator')
+const bcrypt = require('bcrypt')
+
 
 const signup = async (req,res,next) => {
 
@@ -63,7 +66,7 @@ const signin = async (req,res,next) => {
     }).select('+password');
 
 
-    if(!user || user.password !== password){
+    if(!user || (!await bcrypt.compare(password,user.password))){
         res.status(400).json({
             success: false,
             message:  "Invalid credential"

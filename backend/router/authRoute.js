@@ -6,7 +6,7 @@ const jwtAuth = require('../middleware/jwtAuth');
 authRoute.post('/signup',signup);
 authRoute.post('/signin',signin);
 authRoute.get('/user',jwtAuth,getUser);
-authRoute.get('/logout',jwtAuth,logout)
+authRoute.get('/logout',jwtAuth,logout);
 
 
 module.exports = authRoute;
