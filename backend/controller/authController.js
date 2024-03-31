@@ -115,8 +115,31 @@ try {
 
 }
 
+const logout = (req,res,next) => {
+    
+    try {
+
+            const cookieOption = {
+                expire: new Date(),
+                httponly: true 
+            }
+
+            res.cookie('token',null,cookieOption);
+            res.status(200).json({
+                success: true,
+                message: "Log Out"
+            })
+        } catch(e) {
+            res.status(400).json({
+                success: false,
+                message: e.message 
+            })
+        }
+}
+
 module.exports = {
     signup,
     signin,
-    getUser
+    getUser,
+    logout
 }
