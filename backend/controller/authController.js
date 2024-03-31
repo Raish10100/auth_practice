@@ -30,7 +30,7 @@ if(password !== confirmPassword){
 
 
 try{
-    const userInfo = userModel(req.body);//! check here----------------
+    const userInfo = userModel(req.body); 
     const result = await userInfo.save()
 
     return res.status(200).json({
@@ -55,7 +55,68 @@ if(e.code === 11000){
 
 }
 
+const signin = async (req,res,next) => {
+    const { email,password } = req.body ;
+
+    const user = await userModel.findOne({           //! Done mistake: forget to write await
+        email                                          
+    }).select('+password');
+
+
+    if(!user || user.password !== password){
+        res.status(400).json({
+            success: false,
+            message:  "Invalid credential"
+        })
+    }
+
+    try {
+        const token = user.jwtToken();
+
+        user.password = undefined
+
+        const cookieOption = {
+            maxAge: 24*60*60*100,
+            httponly: true 
+        }
+
+
+        res.cookie('token',token,cookieOption);
+
+        res.status(200).json({
+            success: true,
+            data: user 
+        })
+    } catch(e) {
+        res.status(400).json({
+            success: false,
+            message: e.message 
+        })
+    }
+}
+
+const getUser = async (req,res,next) => {
+    const userId = req.user.id;
+
+try {
+    const user = await userModel.findById(userId);
+
+    return res.status(200).json({
+        success: true,
+        data: user 
+    })
+} catch(e){
+    return res.status(400).json({
+        success: false,
+        message : e.message 
+    })
+}
+
+
+}
 
 module.exports = {
-    signup
+    signup,
+    signin,
+    getUser
 }
